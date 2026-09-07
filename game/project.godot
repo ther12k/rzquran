@@ -1,0 +1,28 @@
+; Engine configuration file — RZ Qur'an Kids Godot MVP (GDM-002 shell).
+; Compatibility renderer + single-threaded web export per ADR-001.
+
+config_version=5
+
+[application]
+
+config/name="RZ Qur'an Kids"
+config/description="Shared 2D learning client (mobile web + Android debug). Fixture content only; not a production build."
+run/main_scene="res://scenes/entry/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+BuildInfo="*res://scripts/build_info.gd"
+
+[display]
+
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

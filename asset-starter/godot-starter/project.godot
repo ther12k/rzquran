@@ -1,0 +1,16 @@
+; Standalone asset preview. Not the learning application.
+config_version=5
+
+[application]
+config/name="RZ Quran Kids - Asset Preview"
+run/main_scene="res://preview/asset_preview.tscn"
+
+[display]
+window/size/viewport_width=390
+window/size/viewport_height=844
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.968627, 0.984314, 0.972549, 1)

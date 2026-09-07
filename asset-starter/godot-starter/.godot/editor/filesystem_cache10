@@ -1,0 +1,13 @@
+78098b89c88a74ebe8c20117b8754620
+::res://::1788820011
+::res://assets/::1788820005
+::res://assets/audio/::1788820005
+::res://assets/audio/ui/::1788820005
+ui_complete.wav::AudioStreamWAV::7669068836292084588::1788820005::1788820013::1::::<><><>0<>0<>61b21a23a020cd6fc22e669fbd191010<>res://.godot/imported/ui_complete.wav-21f14a6b41cb4b8a6d640aa3f9af9192.sample::
+ui_confirm.wav::AudioStreamWAV::528847808391000095::1788820005::1788820013::1::::<><><>0<>0<>06b82ae0784b0fcd1e28e483ba2753ad<>res://.godot/imported/ui_confirm.wav-14ffba7f7200e8368e01ffb437ee4143.sample::
+ui_tap.wav::AudioStreamWAV::330822904466798077::1788820005::1788820013::1::::<><><>0<>0<>f2c5216a9f3ed1698f5c3a635d2e9357<>res://.godot/imported/ui_tap.wav-c2e6950c8ae0b2c064e2b1609754e9a2.sample::
+::res://assets/ui/::1788820005
+rzq_kids_theme.tres::Theme::-1::1788820005::0::1::::<><><>0<>0<><>::
+::res://preview/::1788820005
+asset_preview.gd::GDScript::3827940908297275547::1788820005::0::1::::<>Control<><>0<>0<><>::
+asset_preview.tscn::PackedScene::-1::1788820005::0::1::::<><><>0<>0<><>::res://preview/asset_preview.gd

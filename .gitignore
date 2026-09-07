@@ -8,3 +8,23 @@ Thumbs.db
 node_modules/
 .zcode/
 *.log
+
+# Godot: generated import cache and build outputs (never commit)
+/game/.godot/
+/game/build/
+/build/
+# Gradle caches/outputs (template sources under game/android/build ARE committed)
+/game/android/.gradle/
+/game/android/build/.gradle/
+/game/android/build/build/
+/game/android/build/*/build/
+# Engine AARs exceed GitHub file limits; restored from the pinned export
+# template by scripts/build-kids.sh (sha256-pinned there)
+/game/android/build/libs/debug/godot-lib.template_debug.aar
+/game/android/build/libs/release/godot-lib.template_release.aar
+/game/android/local.properties
+/game/android/key.properties
+
+# Signing material — never commit (debug keystore lives outside the repo)
+*.keystore
+*.jks
