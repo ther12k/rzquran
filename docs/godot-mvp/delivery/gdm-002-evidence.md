@@ -28,8 +28,8 @@ x_rzq:
 
 | Field | Value |
 |---|---|
-| Client repository / commit | `ther12k/rzquran` @ `2234243d4569` (branch `main`, clean tree at build time) |
-| Build ID (baked into all artifacts) | `2234243d4569-20260907T222815Z` |
+| Client repository / commit | `ther12k/rzquran` @ `c16a2c7d02c2` (branch `main`, clean tree at build time) |
+| Build ID (baked into all artifacts) | `c16a2c7d02c2-20260907T223253Z` |
 | Godot editor + templates | `4.7.2.stable.official.ed1daf0bf`; templates `4.7.2.stable` (checksums in the [runbook](gdm-002-build-runbook.md)) |
 | Renderer / language | Compatibility (gl_compatibility desktop+mobile), typed GDScript, no C# |
 | Web variant | single-threaded (`variant/thread_support=false`), PWA disabled |
@@ -42,25 +42,25 @@ x_rzq:
 | Criterion | Command / procedure | Result |
 |---|---|---|
 | Web export (real, headless) | `./scripts/build-kids.sh` → `--export-release "Web"` | **PASS** — 9 files in `build/kids-web/` (wasm 39.5 MB, pck, html, worklets, icons) |
-| Linux native export + boot smoke | `--export-debug "Linux"`; run `build/kids-linux/rzq-kids --headless --quit-after 2` | **PASS** — stdout `[rzq-kids] build=2234243d4569-20260907T222815Z platform=native-https`; exit 0 |
+| Linux native export + boot smoke | `--export-debug "Linux"`; run `build/kids-linux/rzq-kids --headless --quit-after 2` | **PASS** — stdout `[rzq-kids] build=c16a2c7d02c2-20260907T223253Z platform=native-https`; exit 0 |
 | Android debug APK (real gradle build) | `--export-debug "Android"` (gradle 8.11.1, debug keystore outside repo) | **PASS** — `rzq-kids-debug.apk` (arm64-v8a, classes.dex, assets) |
 | Shared scenes carry no web-only dependency | smoke binary runs native path; web adapter only loaded when `OS.has_feature("web")` | **PASS** — `platform=native-https` printed by exported binary |
 | Visible build ID in development | `res://build/build_id.txt` packed via `include_filter`; printed + on-screen label | **PASS** — see smoke line above; file present in web pck and APK assets (verified by archive scan) |
-| Same-SHA artifacts | all three exports in one `build-kids.sh` invocation from clean commit `2234243` | **PASS** — web pck and Linux pck byte-identical (`b86aa641…`), APK from same run |
+| Same-SHA artifacts | all three exports in one `build-kids.sh` invocation from clean commit `c16a2c7d02c2` | **PASS** — web pck and Linux pck byte-identical (`beba9e0e…`), APK from same run |
 | Import/parse pass | `godot --headless --import` (game project) | **PASS** — no script errors |
 | Standalone asset preview import (GDA-001) | `godot --headless --import` in `asset-starter/godot-starter` | **PASS** — no errors; kept separate from the game project |
-| No generated cache / signing secret committed | `.gitignore` covers `.godot/`, `game/build/`, `build/`, gradle outputs, `*.keystore` | **PASS** — commit `2234243` contains sources + pinned template only |
+| No generated cache / signing secret committed | `.gitignore` covers `.godot/`, `game/build/`, `build/`, gradle outputs, `*.keystore` | **PASS** — commit `c16a2c7d02c2` contains sources + pinned template only |
 
 ## Artifact SHA-256 (subset; full list in build log)
 
 | Artifact | SHA-256 |
 |---|---|
-| `build/kids-web/index.pck` | `b86aa64119786f26fc855d42d94082f75adb05d225a7f77122dfb1e555268494` |
+| `build/kids-web/index.pck` | `beba9e0ee88b14405b2471981a4e0fc44d0a00ffdff8df7b1be563ea99fcabdb` |
 | `build/kids-web/index.wasm` | `fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0` |
 | `build/kids-web/index.html` | `40f5130d98eb5877808b84dbfe9999fb40f03012955a37ea3cd3e395ba8c0b86` |
 | `build/kids-linux/rzq-kids` | `1a291d3d15e4180b60b0af96cf6458f11fe143636d76575ddf1e23d1a3f24f2e` |
-| `build/kids-linux/rzq-kids.pck` | `b86aa64119786f26fc855d42d94082f75adb05d225a7f77122dfb1e555268494` (= web pck) |
-| `build/kids-android/rzq-kids-debug.apk` | `31053f25105209a9816bd91a0740e933ee7803bace78d8bdaa9b8564eb7b9be9` |
+| `build/kids-linux/rzq-kids.pck` | `beba9e0ee88b14405b2471981a4e0fc44d0a00ffdff8df7b1be563ea99fcabdb` (= web pck) |
+| `build/kids-android/rzq-kids-debug.apk` | `f79e3b035572902fc01d384560ebfe6ca0f94cf0e20eafd00d64940065376f39` |
 
 ## GDA-001 asset adoption (this commit)
 
