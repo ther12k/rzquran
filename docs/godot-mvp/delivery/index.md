@@ -14,3 +14,4 @@
 - [GDM-006 evidence](gdm-006-evidence.md) — QA-07/08/09 matrix, abandon semantics, bounded media gateway, rollback flag.
 - [GDM-007 evidence](gdm-007-evidence.md) — QA-10..13 concurrency/replay/finish semantics, route-layer strict schemas.
 - [GDM-008 evidence](gdm-008-evidence.md) — Bridge validation (QA-14/15 logic level), host page, Godot JSBridge adapter; browser run deferred to QA-31.
+- [GDM-009 evidence](gdm-009-evidence.md) — Staging-only pairing (QA-16/17/18, P1–P5), one-use grants, grant-auth on shared routes, native pairing adapter; device checks deferred to QA-32/37.
