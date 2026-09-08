@@ -12,3 +12,5 @@
 - [GDM-005 learning-pack intake](gdm-005-intake.md) — Three-letter pack intake preparation; all decision fields blank pending GDM-027 human evidence.
 - [GDM-010 evidence](gdm-010-evidence.md) — Schema mapping (reuse vs addition), replay purge + deletion coverage, deferred grant state.
 - [GDM-006 evidence](gdm-006-evidence.md) — QA-07/08/09 matrix, abandon semantics, bounded media gateway, rollback flag.
+- [GDM-007 evidence](gdm-007-evidence.md) — QA-10..13 concurrency/replay/finish semantics, route-layer strict schemas.
+- [GDM-008 evidence](gdm-008-evidence.md) — Bridge validation (QA-14/15 logic level), host page, Godot JSBridge adapter; browser run deferred to QA-31.
