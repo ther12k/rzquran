@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/qa21_shots.gd" id="1_qa21"]
+[ext_resource type="Theme" path="res://theme/rzq_kids_theme.tres" id="2_theme"]
+
+[node name="QA21" type="Node"]
+script = ExtResource("1_qa21")
+
+[node name="Host" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")

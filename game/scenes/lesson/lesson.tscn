@@ -1,0 +1,80 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/lesson/lesson.gd" id="1_lesson"]
+
+[node name="Lesson" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lesson")
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="Spacers" type="HBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SpacerL" type="Control" parent="Scroll/Spacers"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Column" type="VBoxContainer" parent="Scroll/Spacers"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Scroll/Spacers/Column"]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="Scroll/Spacers/Column/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(48, 48)
+text = "Kembali"
+
+[node name="Progress" type="Label" parent="Scroll/Spacers/Column/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = ""
+
+[node name="FixtureBanner" type="PanelContainer" parent="Scroll/Spacers/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BannerLabel" type="Label" parent="Scroll/Spacers/Column/FixtureBanner"]
+autowrap_mode = 2
+layout_mode = 2
+horizontal_alignment = 1
+text = "SIMULASI — BUKAN MATERI BELAJAR"
+
+[node name="LessonTitle" type="Label" parent="Scroll/Spacers/Column"]
+autowrap_mode = 2
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 28
+text = "Latihan Simulasi"
+
+[node name="DebugNote" type="Label" parent="Scroll/Spacers/Column"]
+autowrap_mode = 2
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+text = "[debug] area latihan — diisi GDM-012/013/014/015"
+
+[node name="SpacerR" type="Control" parent="Scroll/Spacers"]
+layout_mode = 2
+size_flags_horizontal = 3

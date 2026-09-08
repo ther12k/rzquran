@@ -1,5 +1,10 @@
-; Engine configuration file — RZ Qur'an Kids Godot MVP (GDM-002 shell).
-; Compatibility renderer + single-threaded web export per ADR-001.
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -17,9 +22,9 @@ BuildInfo="*res://scripts/build_info.gd"
 
 [display]
 
-window/handheld/orientation=1
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/handheld/orientation=1
 
 [rendering]
 
