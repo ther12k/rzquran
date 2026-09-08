@@ -8,3 +8,5 @@
 - [GDM-002 build runbook](gdm-002-build-runbook.md) — Pinned Godot/JDK/SDK/gradle toolchain, project layout, commands, CI expectations.
 - [GDM-002 evidence + GDA-001 adoption](gdm-002-evidence.md) — Executed QA-02 build/smoke results, artifact hashes, adopted asset hashes, unexecuted checks.
 - [GDM-003 evidence](gdm-003-evidence.md) — Executed QA-03/QA-04 contract tests, deep-strict projections, golden fixtures; mapping in `contracts/kids-mvp/MAPPING.md`.
+- [GDM-005 evidence](gdm-005-evidence.md) — Executed QA-06 fixture-mode checks; answer-cursor defect found and fixed.
+- [GDM-005 learning-pack intake](gdm-005-intake.md) — Three-letter pack intake preparation; all decision fields blank pending GDM-027 human evidence.
