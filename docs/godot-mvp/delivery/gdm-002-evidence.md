@@ -50,6 +50,7 @@ x_rzq:
 | Import/parse pass | `godot --headless --import` (game project) | **PASS** — no script errors |
 | Standalone asset preview import (GDA-001) | `godot --headless --import` in `asset-starter/godot-starter` | **PASS** — no errors; kept separate from the game project |
 | No generated cache / signing secret committed | `.gitignore` covers `.godot/`, `game/build/`, `build/`, gradle outputs, `*.keystore` | **PASS** — commit `c16a2c7d02c2` contains sources + pinned template only |
+| Engine-AAR restore path (AARs excluded from git over GitHub's 100 MB limit) | removed both AARs, ran `./scripts/build-kids.sh`; script re-extracted them from the pinned template zip and sha256-verified before gradle | **PASS** — this run's artifacts were built from restored AARs |
 
 ## Artifact SHA-256 (subset; full list in build log)
 
