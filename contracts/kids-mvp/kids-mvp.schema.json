@@ -45,7 +45,7 @@
         "session_id": { "$ref": "#/$defs/uuid" },
         "lesson_id": { "$ref": "#/$defs/uuid" },
         "version_id": { "$ref": "#/$defs/uuid" },
-        "status": { "enum": ["active", "paused", "completed", "replaced", "expired", "recalled"] },
+        "status": { "enum": ["active", "paused", "completed", "replaced", "expired", "recalled", "abandoned"] },
         "last_sequence": { "type": "integer", "minimum": 0 },
         "completed_unit_ids": { "type": "array", "items": { "$ref": "#/$defs/uuid" } },
         "current_question": { "oneOf": [{ "$ref": "#/$defs/question" }, { "type": "null" }] },
@@ -135,6 +135,16 @@
         }
       }
     },
+    "abandonResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "status", "abandoned"],
+      "properties": {
+        "session_id": { "$ref": "#/$defs/uuid" },
+        "status": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "abandoned": { "type": "boolean" }
+      }
+    },
     "startSessionWrite": {
       "type": "object",
       "additionalProperties": false,
@@ -158,6 +168,7 @@
     { "$ref": "#/$defs/session" },
     { "$ref": "#/$defs/answerResponse" },
     { "$ref": "#/$defs/playbackInfo" },
+    { "$ref": "#/$defs/abandonResponse" },
     { "$ref": "#/$defs/errorEnvelope" }
   ]
 }

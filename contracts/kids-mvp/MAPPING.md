@@ -25,8 +25,8 @@ One agreed contract drives the Godot client and the accessible HTML equivalent. 
 | `GET /kids/sessions/{sid}` | `GET /api/v1/learning/sessions/{id}` | same shape, see `session` $def |
 | `POST /kids/sessions/{sid}/attempts` | `POST /api/v1/learning/sessions/{id}/answers` | `event_id` replay instead of `client_request_id` |
 | `POST /kids/sessions/{sid}/finish` | `POST /api/v1/learning/sessions/{id}/finish` | returns `finishResult` (star + fraction); no `first_answer_correct_count` |
-| `POST /kids/sessions/{sid}/abandon` | none yet | gap; new route in GDM-007 |
-| `GET /kids/sessions/{sid}/media/{asset_id}` | `GET /api/v1/media/{assetId}/playback` (metadata); byte route pending | byte-serving gap in GDM-013 |
+| `POST /kids/sessions/{sid}/abandon` | `POST /api/v1/learning/sessions/{id}/abandon` | implemented (GDM-006), `KIDS_MVP_ENABLED`-gated; idempotent; time-expired sessions return neutral `expired` |
+| `GET /kids/sessions/{sid}/media/{asset_id}` | `GET /api/v1/media/stream/{assetId}?session_id={sid}` (bounded byte gateway, GDM-006) + existing playback metadata route | gateway enforces session ownership/membership, verified+stream policy, 3 MiB/20 s bounds, `no-store`; bytes come from `MEDIA_STORAGE_ROOT` (dev/test) — production storage decision still open, route fails closed without it |
 | `GET /parent/profiles/{id}/practice-summary` | `GET /api/v1/parent/children/{childId}/progress` | profile ≡ child |
 | pairing/grant operations (4) | none yet | GDM-009, staging-only per GDM-004 |
 

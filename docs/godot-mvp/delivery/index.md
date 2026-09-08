@@ -10,3 +10,5 @@
 - [GDM-003 evidence](gdm-003-evidence.md) — Executed QA-03/QA-04 contract tests, deep-strict projections, golden fixtures; mapping in `contracts/kids-mvp/MAPPING.md`.
 - [GDM-005 evidence](gdm-005-evidence.md) — Executed QA-06 fixture-mode checks; answer-cursor defect found and fixed.
 - [GDM-005 learning-pack intake](gdm-005-intake.md) — Three-letter pack intake preparation; all decision fields blank pending GDM-027 human evidence.
+- [GDM-010 evidence](gdm-010-evidence.md) — Schema mapping (reuse vs addition), replay purge + deletion coverage, deferred grant state.
+- [GDM-006 evidence](gdm-006-evidence.md) — QA-07/08/09 matrix, abandon semantics, bounded media gateway, rollback flag.
