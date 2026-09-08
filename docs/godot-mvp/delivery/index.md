@@ -7,3 +7,4 @@
 - [GDM-004 threat review](gdm-004-threat-review.md) — Security-checklist walk, resolved design contradictions, staging-only native rules and production rejection tests.
 - [GDM-002 build runbook](gdm-002-build-runbook.md) — Pinned Godot/JDK/SDK/gradle toolchain, project layout, commands, CI expectations.
 - [GDM-002 evidence + GDA-001 adoption](gdm-002-evidence.md) — Executed QA-02 build/smoke results, artifact hashes, adopted asset hashes, unexecuted checks.
+- [GDM-003 evidence](gdm-003-evidence.md) — Executed QA-03/QA-04 contract tests, deep-strict projections, golden fixtures; mapping in `contracts/kids-mvp/MAPPING.md`.

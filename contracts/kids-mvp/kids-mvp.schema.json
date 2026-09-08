@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ther12k/rzquran/contracts/kids-mvp/kids-mvp.schema.json",
+  "title": "RZ Qur'an Kids MVP public contract v1 (GDM-003)",
+  "description": "Wire shapes consumed by the Godot client and the accessible HTML equivalent. Source of truth: packages/contracts/src/kids_mvp.ts in ther12k/rz-quran. Deep-rejecting (additionalProperties: false) so extra private keys fail. A schema validates structure only — not curriculum accuracy or rights.",
+  "$defs": {
+    "uuid": { "type": "string", "format": "uuid" },
+    "optionId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$" },
+    "isoDateTime": { "type": "string", "format": "date-time" },
+    "practiceFraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completed_units", "required_units", "percent"],
+      "properties": {
+        "completed_units": { "type": "integer", "minimum": 0 },
+        "required_units": { "type": "integer", "minimum": 0 },
+        "percent": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["option_id", "label"],
+      "properties": {
+        "option_id": { "$ref": "#/$defs/optionId" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 80 }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question_id", "unit_id", "prompt", "options"],
+      "properties": {
+        "question_id": { "$ref": "#/$defs/uuid" },
+        "unit_id": { "$ref": "#/$defs/uuid" },
+        "prompt": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "options": { "type": "array", "items": { "$ref": "#/$defs/option" }, "minItems": 2, "maxItems": 4 }
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["session_id", "lesson_id", "version_id", "status", "last_sequence", "completed_unit_ids", "current_question", "practice", "estimated_active_ms", "expires_at"],
+      "properties": {
+        "session_id": { "$ref": "#/$defs/uuid" },
+        "lesson_id": { "$ref": "#/$defs/uuid" },
+        "version_id": { "$ref": "#/$defs/uuid" },
+        "status": { "enum": ["active", "paused", "completed", "replaced", "expired", "recalled"] },
+        "last_sequence": { "type": "integer", "minimum": 0 },
+        "completed_unit_ids": { "type": "array", "items": { "$ref": "#/$defs/uuid" } },
+        "current_question": { "oneOf": [{ "$ref": "#/$defs/question" }, { "type": "null" }] },
+        "practice": { "$ref": "#/$defs/practiceFraction" },
+        "estimated_active_ms": { "type": "integer", "minimum": 0 },
+        "expires_at": { "$ref": "#/$defs/isoDateTime" }
+      }
+    },
+    "lessonCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lesson_id", "version_id", "title", "lesson_type", "stage_key", "estimated_minutes", "access", "prerequisite_lesson_ids", "demo_only", "practice"],
+      "properties": {
+        "lesson_id": { "$ref": "#/$defs/uuid" },
+        "version_id": { "$ref": "#/$defs/uuid" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "lesson_type": { "enum": ["listening", "surah", "quiz", "game"] },
+        "stage_key": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "estimated_minutes": { "type": "integer", "minimum": 1, "maximum": 15 },
+        "access": { "enum": ["available", "locked"] },
+        "prerequisite_lesson_ids": { "type": "array", "items": { "$ref": "#/$defs/uuid" } },
+        "demo_only": { "type": "boolean" },
+        "practice": { "$ref": "#/$defs/practiceFraction" }
+      }
+    },
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_version", "content_mode", "profile", "lesson", "active_session", "server_time"],
+      "properties": {
+        "contract_version": { "const": "1" },
+        "content_mode": { "enum": ["fixture", "reviewed_learning"] },
+        "profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "nickname"],
+          "properties": {
+            "id": { "$ref": "#/$defs/uuid" },
+            "nickname": { "type": "string", "minLength": 1, "maxLength": 64 }
+          }
+        },
+        "lesson": { "oneOf": [{ "$ref": "#/$defs/lessonCard" }, { "type": "null" }] },
+        "active_session": { "oneOf": [{ "$ref": "#/$defs/session" }, { "type": "null" }] },
+        "server_time": { "$ref": "#/$defs/isoDateTime" }
+      }
+    },
+    "answerResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "sequence", "question_id", "selected_option_id", "correct", "first_response", "replayed"],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/uuid" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "question_id": { "$ref": "#/$defs/uuid" },
+        "selected_option_id": { "$ref": "#/$defs/optionId" },
+        "correct": { "type": "boolean" },
+        "first_response": { "type": "boolean" },
+        "replayed": { "type": "boolean" }
+      }
+    },
+    "playbackInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["asset_id", "playback_url", "duration_ms", "mime_type"],
+      "properties": {
+        "asset_id": { "$ref": "#/$defs/uuid" },
+        "playback_url": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "duration_ms": { "type": "integer", "minimum": 0 },
+        "mime_type": { "type": "string", "pattern": "^[a-z]+\\/[a-z0-9.+-]+$" }
+      }
+    },
+    "errorEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["error"],
+      "properties": {
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message", "request_id"],
+          "properties": {
+            "code": { "type": "string", "minLength": 1 },
+            "message": { "type": "string", "minLength": 1 },
+            "request_id": { "type": "string", "minLength": 1 },
+            "details": {}
+          }
+        }
+      }
+    },
+    "startSessionWrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lesson_id"],
+      "properties": { "lesson_id": { "$ref": "#/$defs/uuid" } }
+    },
+    "answerWrite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "client_at", "question_id", "selected_option_id"],
+      "properties": {
+        "event_id": { "$ref": "#/$defs/uuid" },
+        "client_at": { "oneOf": [{ "$ref": "#/$defs/isoDateTime" }, { "type": "null" }] },
+        "question_id": { "$ref": "#/$defs/uuid" },
+        "selected_option_id": { "$ref": "#/$defs/optionId" }
+      }
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/bootstrap" },
+    { "$ref": "#/$defs/session" },
+    { "$ref": "#/$defs/answerResponse" },
+    { "$ref": "#/$defs/playbackInfo" },
+    { "$ref": "#/$defs/errorEnvelope" }
+  ]
+}
