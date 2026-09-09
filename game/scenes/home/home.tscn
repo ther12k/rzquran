@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/home/home.gd" id="1_home"]
+[ext_resource type="Texture2D" path="res://assets/art/mascot_girl.png" id="2_mascot"]
+[ext_resource type="Script" path="res://scenes/shared/star_doodle.gd" id="3_star"]
+[ext_resource type="Texture2D" path="res://assets/art/deco_cloud.png" id="4_cloud"]
+[ext_resource type="Texture2D" path="res://assets/art/btn_mulai.png" id="5_btnmulai"]
 
 [node name="Home" type="Control"]
 layout_mode = 3
@@ -33,111 +37,135 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
 
 [node name="Header" type="HBoxContainer" parent="Scroll/Spacers/Column"]
 layout_mode = 2
 
 [node name="Greeting" type="Label" parent="Scroll/Spacers/Column/Header"]
-autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 24
+theme_type_variation = "HeadingBold"
+theme_override_font_sizes/font_size = 26
+autowrap_mode = 2
 text = "Halo!"
 
 [node name="ExitButton" type="Button" parent="Scroll/Spacers/Column/Header"]
 unique_name_in_owner = true
 layout_mode = 2
-custom_minimum_size = Vector2(48, 48)
+theme_type_variation = "GhostButton"
+custom_minimum_size = Vector2(72, 48)
 text = "Keluar"
 
 [node name="Subtitle" type="Label" parent="Scroll/Spacers/Column"]
-autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = "Muted"
 text = "Yuk, belajar sebentar."
 
-[node name="FixtureBanner" type="PanelContainer" parent="Scroll/Spacers/Column"]
+[node name="HeroCard" type="PanelContainer" parent="Scroll/Spacers/Column"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BannerLabel" type="Label" parent="Scroll/Spacers/Column/FixtureBanner"]
-autowrap_mode = 2
+[node name="HeroBox" type="HBoxContainer" parent="Scroll/Spacers/Column/HeroCard"]
 layout_mode = 2
-horizontal_alignment = 1
+theme_override_constants/separation = 10
+
+[node name="Mascot" type="TextureRect" parent="Scroll/Spacers/Column/HeroCard/HeroBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 168)
+texture = ExtResource("2_mascot")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeroInfo" type="VBoxContainer" parent="Scroll/Spacers/Column/HeroCard/HeroBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Banner" type="PanelContainer" parent="Scroll/Spacers/Column/HeroCard/HeroBox/HeroInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "TileYellow"
+
+[node name="BannerLabel" type="Label" parent="Scroll/Spacers/Column/HeroCard/HeroBox/HeroInfo/Banner"]
+layout_mode = 2
+theme_type_variation = "SmallBold"
+autowrap_mode = 2
 text = "SIMULASI — BUKAN MATERI BELAJAR"
+
+[node name="CardTitle" type="Label" parent="Scroll/Spacers/Column/HeroCard/HeroBox/HeroInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "HeadingBold"
+theme_override_font_sizes/font_size = 24
+autowrap_mode = 2
+text = "Latihan Simulasi"
+
+[node name="CardDesc" type="Label" parent="Scroll/Spacers/Column/HeroCard/HeroBox/HeroInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "Muted"
+autowrap_mode = 2
+text = "Dengarkan contoh, lalu pilih jawabannya."
+
+[node name="StarTR" type="Control" parent="Scroll/Spacers/Column"]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
 
 [node name="Gap" type="Control" parent="Scroll/Spacers/Column"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 8)
+custom_minimum_size = Vector2(0, 4)
 
-[node name="LessonCard" type="PanelContainer" parent="Scroll/Spacers/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="CardColumn" type="VBoxContainer" parent="Scroll/Spacers/Column/LessonCard"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Illo" type="Label" parent="Scroll/Spacers/Column/LessonCard/CardColumn"]
-layout_mode = 2
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 56
-text = "● ■ ▲"
-
-[node name="CardTitle" type="Label" parent="Scroll/Spacers/Column/LessonCard/CardColumn"]
-autowrap_mode = 2
-unique_name_in_owner = true
-layout_mode = 2
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
-text = "Latihan Simulasi"
-
-[node name="CardDesc" type="Label" parent="Scroll/Spacers/Column/LessonCard/CardColumn"]
-autowrap_mode = 2
-unique_name_in_owner = true
-layout_mode = 2
-horizontal_alignment = 1
-text = "Dengarkan contoh, lalu pilih jawabannya."
-
-[node name="StartButton" type="Button" parent="Scroll/Spacers/Column/LessonCard/CardColumn"]
+[node name="StartButton" type="Button" parent="Scroll/Spacers/Column"]
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(0, 56)
-theme_override_font_sizes/font_size = 24
-text = "Mulai belajar"
+theme_override_font_sizes/font_size = 20
+text = "  Mulai belajar"
 
-
-
-
-
-[node name="LoadingLabel" type="Label" parent="Scroll/Spacers/Column"]
+[node name="LoadingCard" type="PanelContainer" parent="Scroll/Spacers/Column"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="LoadingLabel" type="Label" parent="Scroll/Spacers/Column/LoadingCard"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "Muted"
 autowrap_mode = 2
 text = "Sedang menyiapkan latihan…"
 
-[node name="UnavailableLabel" type="Label" parent="Scroll/Spacers/Column"]
+[node name="UnavailableCard" type="PanelContainer" parent="Scroll/Spacers/Column"]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="UnavailableLabel" type="Label" parent="Scroll/Spacers/Column/UnavailableCard"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "Muted"
 autowrap_mode = 2
 text = "Materi ini belum tersedia."
 
-[node name="ErrorBox" type="VBoxContainer" parent="Scroll/Spacers/Column"]
+[node name="ErrorCard" type="PanelContainer" parent="Scroll/Spacers/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ErrorBox" type="VBoxContainer" parent="Scroll/Spacers/Column/ErrorCard"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ErrorLabel" type="Label" parent="Scroll/Spacers/Column/ErrorBox"]
+[node name="ErrorLabel" type="Label" parent="Scroll/Spacers/Column/ErrorCard/ErrorBox"]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 2
 text = "Koneksi terputus."
 
-[node name="RetryButton" type="Button" parent="Scroll/Spacers/Column/ErrorBox"]
+[node name="RetryButton" type="Button" parent="Scroll/Spacers/Column/ErrorCard/ErrorBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = "GhostButton"
 custom_minimum_size = Vector2(0, 48)
 text = "Coba sambungkan lagi"
 

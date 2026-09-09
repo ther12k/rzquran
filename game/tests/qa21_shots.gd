@@ -65,7 +65,7 @@ func _ready() -> void:
 		await _frames(2)
 		_check(home.get_node("%StartButton").visible, "%s home shows start" % tag)
 		_check(home.get_node("%StartButton").text == "Lanjutkan", "%s resume copy" % tag)
-		_check(home.get_node("%FixtureBanner").visible, "%s fixture banner visible" % tag)
+		_check(home.get_node("%Banner").visible, "%s fixture banner visible" % tag)
 		_check(home.get_node("%StartButton").size.y >= 48.0, "%s start button >= 48 high" % tag)
 		_check(home.get_node("%ExitButton").size.x >= 48.0 and home.get_node("%ExitButton").size.y >= 48.0, "%s exit >= 48" % tag)
 		_column_in_view(home, tag)
@@ -79,7 +79,7 @@ func _ready() -> void:
 			"can_resume": false,
 		})
 		await _frames(2)
-		_check(home.get_node("%FixtureBanner").visible == false, "%s reviewed hides banner" % tag)
+		_check(home.get_node("%Banner").visible == false, "%s reviewed hides banner" % tag)
 		_check(home.get_node("%StartButton").text == "Mulai belajar", "%s start copy" % tag)
 		await _shoot("%s-home-reviewed.png" % tag, out_dir)
 

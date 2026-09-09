@@ -18,15 +18,18 @@ const LESSON_TEASER := "Dengarkan contoh, lalu pilih jawabannya."
 
 @onready var _greeting: Label = %Greeting
 @onready var _subtitle: Label = %Subtitle
-@onready var _banner: PanelContainer = %FixtureBanner
-@onready var _card: PanelContainer = %LessonCard
+@onready var _banner: PanelContainer = %Banner
+@onready var _card: PanelContainer = %HeroCard
 @onready var _card_title: Label = %CardTitle
 @onready var _card_desc: Label = %CardDesc
 @onready var _start_button: Button = %StartButton
 @onready var _exit_button: Button = %ExitButton
 @onready var _loading: Label = %LoadingLabel
+@onready var _loading_card: PanelContainer = %LoadingCard
 @onready var _unavailable: Label = %UnavailableLabel
+@onready var _unavailable_card: PanelContainer = %UnavailableCard
 @onready var _error_box: VBoxContainer = %ErrorBox
+@onready var _error_card: PanelContainer = %ErrorCard
 @onready var _error_label: Label = %ErrorLabel
 @onready var _retry_button: Button = %RetryButton
 @onready var _column: VBoxContainer = %Column
@@ -48,7 +51,7 @@ func _ready() -> void:
 ## Distinct state: loading (nothing actionable yet, no fake percent).
 func show_loading() -> void:
 	_set_home_visible(false)
-	_loading.visible = true
+	_loading_card.visible = true
 	_loading.text = COPY.LOAD_WAIT
 
 
@@ -56,14 +59,14 @@ func show_loading() -> void:
 ## recalled content). Never shown together with the start card.
 func show_unavailable(message: String) -> void:
 	_set_home_visible(false)
-	_unavailable.visible = true
+	_unavailable_card.visible = true
 	_unavailable.text = message
 
 
 ## Distinct state: recoverable failure with a retry action.
 func show_error(message: String) -> void:
 	_set_home_visible(false)
-	_error_box.visible = true
+	_error_card.visible = true
 	_error_label.text = message
 
 
@@ -89,9 +92,9 @@ func set_busy(busy: bool) -> void:
 
 
 func _set_home_visible(home_visible: bool) -> void:
-	_loading.visible = false
-	_unavailable.visible = false
-	_error_box.visible = false
+	_loading_card.visible = false
+	_unavailable_card.visible = false
+	_error_card.visible = false
 	_greeting.visible = home_visible
 	_subtitle.visible = home_visible
 	_banner.visible = home_visible and _fixture_on
