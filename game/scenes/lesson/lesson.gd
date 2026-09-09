@@ -24,6 +24,7 @@ func _ready() -> void:
 	_back_button.pressed.connect(func() -> void: exit_to_home.emit())
 	resized.connect(_apply_width_cap)
 	_debug_note.visible = OS.is_debug_build()
+	# Same rationale as home.gd: sized-before-ready means resized won't refire.
 	_apply_width_cap()
 
 

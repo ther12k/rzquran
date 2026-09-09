@@ -39,6 +39,9 @@ func _ready() -> void:
 	_exit_button.pressed.connect(func() -> void: exit_pressed.emit())
 	_retry_button.pressed.connect(func() -> void: retry_pressed.emit())
 	resized.connect(_apply_width_cap)
+	# Anchored controls may already be sized before _ready runs, in which
+	# case resized never fires again — apply the cap once explicitly.
+	_apply_width_cap()
 	show_loading()
 
 

@@ -29,7 +29,7 @@ x_rzq:
 | Field | Value |
 |---|---|
 | Scenes | this repo — `game/scenes/entry/main.gd` (composition root + lesson state machine), `game/scenes/home/home.gd/.tscn` (U04 home), `game/scenes/lesson/lesson.gd/.tscn` (lesson shell for GDM-012+), `game/services/copy.gd` (Indonesian copy source), `game/tests/qa21_shots.gd/.tscn` (QA-21 harness) |
-| Build | all three targets rebuilt @ build ID `9f27ea5bc5e4-20260908T203851Z` from this commit, smoke green (`platform=native-https`) |
+| Build | all three targets rebuilt @ build ID `057e41a2e07d-20260909T015947Z` from this commit, smoke green (`platform=native-https`) |
 | Executor / time | implementation agent (zcode), 2026-09-09 ~03:20–03:50 local (UTC+7) |
 
 ## Design as implemented
@@ -49,6 +49,7 @@ x_rzq:
 | QA-21 | Reflow invariants at five target sizes — small phone 360×640, large phone 430×800, tablet 768×900, desktop 1280×800, landscape phone 640×360 | `game/tests/qa21_shots.gd` (70 automated assertions): start/exit/back buttons ≥48 dp, start/exit inside the visible area, banner visibility per mode, resume-vs-start copy, state distinctness (loading hides start; unavailable hides card; error shows retry), column width cap | **PASS** (70/70) |
 | QA-21 | Rendered layouts at those sizes for human review | 30 PNG screenshots saved by the same harness (`build/qa21/`, set sha256 prefix `4d58b2b5a73242b0`), visually inspected by the implementer: banner/card/button hierarchy per the U04 wireframe; no clipped or overlapping controls at any target size | **PASS** (implementer-reviewed) |
 | — | Composition root boots from the export and prints the dev line | build smoke run (exported Linux binary): `[rzq-kids] build=… platform=native-https` | **PASS** |
+| — | **Live follow-up (2026-09-09)**: portrait base resolution set (`window/size/viewport_*` = 390×844) after the live browser run showed the engine default 1152×648 base shrinking the UI to ~⅓ scale; width-cap now applied explicitly in `_ready` (anchored controls size before `resized` connects). QA-21 re-run green (70/70); live Chrome render at 390×791 matches the U04 wireframe | live e2e + QA-21 re-run + screenshot | **PASS** |
 | — | Theme applied in harness renders (real StyleBoxFlat controls, not fallback styling) | harness loads `rzq_kids_theme.tres`; screenshots show themed buttons/cards | **PASS** |
 | — | Full regression of prior tasks unaffected: backend integration 37, contracts 26, unit 15, security 17 (rz-quran @ `6ae8de1`) | suites (unchanged by this task; re-verified this session) | **PASS** |
 

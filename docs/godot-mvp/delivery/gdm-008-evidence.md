@@ -51,9 +51,19 @@ x_rzq:
 | QA-15 | No cookie/CSRF material in serialized bridge traffic; dispose drops late messages | same | **PASS** |
 | — | Web app typecheck; client export rebuild + native smoke run (`platform=native-https`); runtime synced same-origin | build log | **PASS** |
 | — | Full backend regression: integration 22, contracts 26, unit 15, security 17 | suites | **PASS** |
+| QA-14/15 | **LIVE BROWSER ROUND-TRIP (2026-09-09, follow-up)**: real Chrome (Playwright, system Chrome, SwiftShader WebGL2) against the local dev stack — signed-in parent → child mode → `/anak/godot`; the exported runtime booted, sent `bootstrap`, the host validated + dispatched (`/me`, `/catalog`, `/learning/current` all 200) and the runtime received the response; home rendered with live server data (nickname from the session) | `node_modules/rzq-check/rzq-*.mjs` probes (rz-quran worktree) + rendered screenshot | **PASS** (after two real fixes, below) |
+
+## Live-browser fixes (found only because the round-trip was executed)
+
+1. **GDScript Dictionary → JS marshaling**: passing the envelope Dictionary through the `JavaScriptObject` interface call delivered a mangled object that the host rejected (`reject:shape`). Fix: the game serializes to a JSON string and the page-side forwarder parses it before `postMessage`.
+2. **`JavaScriptBridge.create_callback` garbage collection**: the callback was referenced only from JS (`window.rzqToGodot`); Godot collected it and host→game responses silently no-op'd. Fix: keep a strong GDScript-side member reference.
+
+Both violate the earlier "logic level" assumption and are now covered by the live run; the unit tests remain green because they test host logic with fake windows, which cannot see engine marshaling.
 
 ## Explicitly not executed (honest boundary)
 
-- **No real browser run**: the JSBridge listener injection, postMessage round-trip, and media buffer transfer through the actual Godot web export have NOT been executed in Chrome/Safari. QA-14/15 are verified at the logic level (pure host module + fake windows); the live-browser pass belongs to QA-31/GDM-019 and the physical device matrix (QA-37).
-- No Playwright E2E for the `/anak/godot` journey yet (auth + child mode + iframe loading) — proposed as part of GDM-019's web integration checks.
-- The dev-mode serving path (Vite dev server vs built static host) has not been exercised end-to-end.
+- ~~**No real browser run**~~ — **superseded 2026-09-09**: the live Chrome round-trip now passes (see executed checks). Still open from the original list:
+- Safari/Firefox and real mobile browsers untested (QA-31/GDM-019 device matrix).
+- Media buffer transfer (`get_media`) has not carried real audio bytes in a live run yet (no audio assets exist).
+- The full journey inside the game (start → rounds → finish) awaits GDM-012..015 scenes.
+- The dev-mode serving path (Vite dev server vs built static host) has now been exercised for boot+bootstrap via Vite; the built static host path is still unexercised.

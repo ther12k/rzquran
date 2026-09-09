@@ -34,6 +34,8 @@ func _ready() -> void:
 	_build_label.text = "Build %s" % BuildInfo.build_id
 	_platform_label.text = "Platform: %s" % _client.platform_name()
 	print("[rzq-kids] build=%s platform=%s" % [BuildInfo.build_id, _client.platform_name()])
+	var w := get_window()
+	print("[rzq-kids][win] size=%s content_scale_size=%s content_scale_factor=%.2f" % [w.size, w.content_scale_size, w.content_scale_factor])
 	_home = HOME_SCENE.instantiate()
 	_home.start_pressed.connect(_on_start_pressed)
 	_home.exit_pressed.connect(_on_exit_pressed)

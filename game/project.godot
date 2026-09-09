@@ -22,6 +22,10 @@ BuildInfo="*res://scripts/build_info.gd"
 
 [display]
 
+; Portrait phone design size (UX spec targets 360-430 logical widths);
+; canvas_items+expand lets the width-capped columns reflow at every size.
+window/size/viewport_width=390
+window/size/viewport_height=844
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=1
