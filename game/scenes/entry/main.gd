@@ -10,13 +10,15 @@ const PLATFORM_BASE := preload("res://platform/platform_client.gd")
 const COPY := preload("res://services/copy.gd")
 const HOME_SCENE := preload("res://scenes/home/home.tscn")
 const LESSON_SCENE := preload("res://scenes/lesson/lesson.tscn")
+const PAIRING_SCENE := preload("res://scenes/entry/pairing.tscn")
 
-enum State { BOOT, LOADING_HOME, HOME, STARTING, LESSON, EXITING }
+enum State { BOOT, LOADING_HOME, HOME, STARTING, LESSON, PAIRING, EXITING }
 
 var _client: PLATFORM_BASE
 var _state: State = State.BOOT
 var _home: Control
 var _lesson: Control
+var _pairing: Control
 var _bootstrap: Dictionary = {}
 var _active_session: Dictionary = {}
 var _seq: int = 0
@@ -42,11 +44,20 @@ func _ready() -> void:
 	_home.retry_pressed.connect(_load_home)
 	_lesson = LESSON_SCENE.instantiate()
 	_lesson.exit_to_home.connect(_on_back_to_home)
+	_pairing = PAIRING_SCENE.instantiate()
+	_pairing.exit_pressed.connect(_on_exit_pressed)
+	_pairing.retry_pressed.connect(_on_pairing_retry)
+	if _client.has_signal("pairing_code_required"):
+		_client.pairing_code_required.connect(_on_pairing_code_required)
 	add_child(_home)
 	add_child(_lesson)
+	add_child(_pairing)
 	_home.visible = true
 	_lesson.visible = false
-	_load_home()
+	_pairing.visible = false
+	# Deferred: during _ready the tree is still setting up children, so any
+	# HTTPRequest added inside the transport would fail to enter the tree.
+	_load_home.call_deferred()
 
 
 func _make_client() -> PLATFORM_BASE:
@@ -71,6 +82,11 @@ func _load_home() -> void:
 	if _state != State.LOADING_HOME:
 		return
 	if not result.ok:
+		# Native transport without a grant: enter the staging pairing flow
+		# (U02) instead of a dead end. Web never sees GRANT_REQUIRED.
+		if result.error_code == "GRANT_REQUIRED" and "pair_and_acquire_grant" in _client:
+			_start_pairing()
+			return
 		_home.show_error(_message_for(result.error_code))
 		_state = State.HOME
 		return
@@ -144,6 +160,40 @@ func _on_back_to_home() -> void:
 	_load_home()
 
 
+## Staging pairing (native only): shows the human code and waits for the
+## allowlisted parent's approval, then re-enters the normal home load.
+func _start_pairing() -> void:
+	_state = State.PAIRING
+	_home.visible = false
+	_lesson.visible = false
+	_pairing.visible = true
+	_pairing.show_waiting()
+	_pairing.set_retry_busy(true)
+	var result: PLATFORM_BASE.Result = await _client.call("pair_and_acquire_grant")
+	if _state != State.PAIRING:
+		return
+	if result.ok:
+		print("[rzq-kids][pairing] grant acquired")
+		_pairing.visible = false
+		_load_home()
+		return
+	_pairing.set_retry_busy(false)
+	_pairing.show_failed(_message_for(result.error_code))
+
+
+func _on_pairing_retry() -> void:
+	if _state == State.PAIRING:
+		_start_pairing()
+
+
+func _on_pairing_code_required(human_code: String, expires_at: String, pairing_id: String) -> void:
+	_pairing.show_code(human_code, expires_at, pairing_id)
+	if OS.is_debug_build():
+		# Dev aid only: the code alone cannot redeem anything without the
+		# verifier, which never leaves native memory.
+		print("[rzq-kids][pairing] code=%s pairing_id=%s" % [human_code, pairing_id])
+
+
 ## Exit must never be obstructed and stops any audio immediately. On web the
 ## host tears the runtime down after the exit message; on native we quit.
 func _on_exit_pressed() -> void:
@@ -166,6 +216,10 @@ func _message_for(error_code: String) -> String:
 			return COPY.SESSION_EXPIRED
 		"CONTENT_RECALLED":
 			return COPY.CONTENT_RECALLED
+		"PAIRING_DENIED":
+			return COPY.PAIRING_DENIED
+		"PAIRING_EXPIRED", "PAIRING_TIMEOUT":
+			return COPY.PAIRING_EXPIRED_CODE
 		"GRANT_REQUIRED", "GRANT_INVALID":
 			# Staging grant ended (expiry/revocation): restart flow from home.
 			return COPY.SESSION_EXPIRED

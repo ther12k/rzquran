@@ -63,10 +63,14 @@ x_rzq:
 | — | Client rebuild: Web/Linux/Android @ build ID `cde7fc5449ef-20260908T200807Z`; native smoke run green (`platform=native-https` — the new adapter parses, loads, and boots); artifacts hashed by `scripts/build-kids.sh` | build log | **PASS** |
 | — | Security-scope adjustment: `kids-runtime` (synced engine build artifact) excluded from the T060 source-tree leak scan — Godot's engine layer contains inert media-capture references the game never invokes; documented in `tests/security/leak-scans.test.ts` | `rz-quran` security suite | **PASS** (documented exclusion) |
 
+## Live follow-up (2026-09-09): native pairing round-trip executed on desktop
+
+The desktop (Linux, native-https transport) build performed the full staging flow against the local dev stack: GDScript created the pairing (S256 challenge), displayed the human code, the allowlisted parent approved profile "Aisyah" via `POST /parent/kids/pairings/approve`, the game's bounded poll redeemed the one-use grant, and the home rendered over the bearer transport. Executed fixes: `Crypto.generate_random_bytes` (4.7 API), hashing the verifier STRING for S256 (RFC 7636 — raw bytes mismatched), and deferring startup (HTTPRequest cannot enter the tree during scene setup). Still not executed: an actual Android device (QA-32/37 unchanged).
+
 ## Explicitly not executed (honest boundary)
 
 - **No physical Android device**: QA-18's on-device portion (storage inspection proving no persistent token, app kill/restart behavior, permission inspection on the installed APK, real network path) has NOT been executed. The APK exists (`build/kids-android/rzq-kids-debug.apk`, internet permission only per the GDM-002 export preset) but no device run is claimed. Device matrix = QA-32/37.
-- **No live GDScript↔server round-trip**: the pairing flow is executed at HTTP level in the backend suite; the GDScript adapter is verified to compile, load and boot (smoke) but has not polled a running server. A staging deployment does not exist (no external deployment is authorized) and no device/emulator check has been run.
+- ~~**No live GDScript↔server round-trip**~~ — **superseded for the pairing flow** (see live follow-up above): GDScript pairing → approval → one-use redemption → bearer bootstrap ran live from the desktop build. Still open: Android device specifically, media bytes, and a staging deployment (none authorized).
 - **Throttle source detection** uses `X-Forwarded-For`/`X-Real-IP`; tests inject these headers. A production-grade deployment must set them at a trusted proxy — noted as an ops requirement, not exercised.
 - **Parent allowlist contents** are an operations decision (default empty); no staging parent has been allowlisted by an owner.
 - GDM-027 remains the gate for real learning content; pairing reaches demo-assured profiles only.

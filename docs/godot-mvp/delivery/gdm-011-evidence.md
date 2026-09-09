@@ -51,6 +51,7 @@ x_rzq:
 | — | Composition root boots from the export and prints the dev line | build smoke run (exported Linux binary): `[rzq-kids] build=… platform=native-https` | **PASS** |
 | — | **Live follow-up (2026-09-09)**: portrait base resolution set (`window/size/viewport_*` = 390×844) after the live browser run showed the engine default 1152×648 base shrinking the UI to ~⅓ scale; width-cap now applied explicitly in `_ready` (anchored controls size before `resized` connects). QA-21 re-run green (70/70); live Chrome render at 390×791 matches the U04 wireframe | live e2e + QA-21 re-run + screenshot | **PASS** |
 | — | Theme applied in harness renders (real StyleBoxFlat controls, not fallback styling) | harness loads `rzq_kids_theme.tres`; screenshots show themed buttons/cards | **PASS** |
+| — | **Pairing panel added (U02 foundation, 2026-09-09)**: `scenes/entry/pairing.gd/.tscn` — code display (grouped), waiting, failure + retry states, exit always reachable, pairing_id debug-only. QA-21 extended: **90 checks green**; live desktop run rendered the panel with a real code | QA-21 re-run + live run | **PASS** |
 | — | Full regression of prior tasks unaffected: backend integration 37, contracts 26, unit 15, security 17 (rz-quran @ `6ae8de1`) | suites (unchanged by this task; re-verified this session) | **PASS** |
 
 ## Explicitly not executed (honest boundary)

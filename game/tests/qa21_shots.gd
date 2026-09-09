@@ -8,6 +8,7 @@ extends Node
 
 const HOME_SCENE := preload("res://scenes/home/home.tscn")
 const LESSON_SCENE := preload("res://scenes/lesson/lesson.tscn")
+const PAIRING_SCENE := preload("res://scenes/entry/pairing.tscn")
 
 const WIDTHS := [
 	Vector2i(360, 640),   # small phone portrait
@@ -28,9 +29,12 @@ func _ready() -> void:
 
 	var home := HOME_SCENE.instantiate()
 	var lesson := LESSON_SCENE.instantiate()
+	var pairing := PAIRING_SCENE.instantiate()
 	lesson.visible = false
+	pairing.visible = false
 	$Host.add_child(home)
 	$Host.add_child(lesson)
+	$Host.add_child(pairing)
 
 	# The OS window stays fixed; the Host Control is resized to each target so
 	# layout is deterministic (no WM resize animation mid-capture).
@@ -97,6 +101,22 @@ func _ready() -> void:
 		_check(lesson.get_node("%BackButton").size.x >= 48.0 and lesson.get_node("%BackButton").size.y >= 48.0, "%s lesson back >= 48" % tag)
 		await _shoot("%s-lesson.png" % tag, out_dir)
 
+		# Pairing panel (U02): code display, waiting, failure states
+		lesson.visible = false
+		pairing.visible = true
+		pairing.show_code("ABCD2345", "2026-01-01T00:05:00Z", "00000000-0000-0000-0000-000000000000")
+		await _frames(2)
+		_check(pairing.get_node("%CodeLabel").text == "ABCD 2345", "%s pairing code shown grouped" % tag)
+		_check(pairing.get_node("%WaitLabel").visible, "%s pairing wait visible" % tag)
+		_check(pairing.get_node("%ExitButton").size.x >= 48.0 and pairing.get_node("%ExitButton").size.y >= 48.0, "%s pairing exit >= 48" % tag)
+		await _shoot("%s-pairing.png" % tag, out_dir)
+		pairing.show_failed("Kode penautan kedaluwarsa. Coba lagi.")
+		await _frames(2)
+		_check(pairing.get_node("%FailBox").visible and pairing.get_node("%RetryButton").visible, "%s pairing failure distinct" % tag)
+		await _shoot("%s-pairing-failed.png" % tag, out_dir)
+		pairing.visible = false
+
+	pairing.queue_free()
 	lesson.queue_free()
 	home.queue_free()
 

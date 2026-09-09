@@ -25,7 +25,7 @@ const POLL_INTERVAL_FLOOR_S := 5.0
 const REQUEST_TIMEOUT_S := 15.0
 const VERIFIER_BYTES := 32
 
-signal pairing_code_required(human_code: String, expires_at: String)
+signal pairing_code_required(human_code: String, expires_at: String, pairing_id: String)
 signal pairing_finished(status: String)
 
 var _api_base: String = ""
@@ -52,11 +52,13 @@ func profile() -> Dictionary:
 func pair_and_acquire_grant() -> Result:
 	_load_env()
 	var crypto := Crypto.new()
-	var verifier_bytes: PackedByteArray = crypto.generate_bytes(VERIFIER_BYTES)
+	var verifier_bytes: PackedByteArray = crypto.generate_random_bytes(VERIFIER_BYTES)
 	var verifier: String = _b64url(verifier_bytes)
+	# RFC 7636 S256: challenge = base64url(SHA256(ASCII(code_verifier))) —
+	# the STRING is hashed, not the raw bytes (server re-hashes the string).
 	var hasher := HashingContext.new()
 	hasher.start(HashingContext.HASH_SHA256)
-	hasher.update(verifier_bytes)
+	hasher.update(verifier.to_utf8_buffer())
 	var challenge: String = _b64url(hasher.finish())
 
 	var created := await _json_request(HTTPClient.METHOD_POST, PAIRING_PATH, {
@@ -73,7 +75,7 @@ func pair_and_acquire_grant() -> Result:
 		return fail("PAIRING_INVALID")
 
 	# Surface the code; the allowlisted parent enters it on the fixed web route.
-	emit_signal("pairing_code_required", human_code, expires_at)
+	emit_signal("pairing_code_required", human_code, expires_at, pairing_id)
 
 	var deadline_ms := Time.get_ticks_msec() + int(POLL_INTERVAL_FLOOR_S * 1000.0 * 60.0)
 	while Time.get_ticks_msec() < deadline_ms:
@@ -193,7 +195,7 @@ func _store_grant(redemption: Dictionary, _poll_interval: float) -> void:
 
 func _new_request_key() -> String:
 	var crypto := Crypto.new()
-	return _b64url(crypto.generate_bytes(16))
+	return _b64url(crypto.generate_random_bytes(16))
 
 
 ## base64url (RFC 4648 §5) without padding — Marshalls only offers the

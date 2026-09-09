@@ -20,6 +20,12 @@ const CONTENT_RECALLED := "Materi ini sedang diperiksa. Pilih kegiatan lain."
 const SESSION_EXPIRED := "Sesi ini sudah berakhir. Yuk, mulai lagi."
 const VERSION_UNSUPPORTED := "Aplikasi tidak cocok dengan server. Perbarui aplikasi."
 const EXIT_UNFINISHED_NOTE := "Sesi yang belum selesai tidak dihitung sebagai latihan."
+const PAIRING_TITLE := "Minta bantuan orang tua"
+const PAIRING_HINT := "Minta orang tua membuka situs dan memasukkan kode ini."
+const PAIRING_EXPIRES := "Kode ini berlaku selama 5 menit."
+const PAIRING_WAIT := "Menunggu persetujuan orang tua…"
+const PAIRING_DENIED := "Penautan ditolak. Coba lagi."
+const PAIRING_EXPIRED_CODE := "Kode penautan kedaluwarsa. Coba lagi."
 
 ## Contract version this build speaks; anything else refuses to render
 ## learning content (godot-structure.md: reject incompatible versions).
