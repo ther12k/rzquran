@@ -145,6 +145,14 @@ func bootstrap() -> Result:
 	return await _request("bootstrap")
 
 
+func get_lesson(lesson_id: String) -> Result:
+	return await _request("get_lesson", { "lesson_id": lesson_id })
+
+
+func submit_events(session_id: String, events: Array) -> Result:
+	return await _request("submit_events", { "session_id": session_id, "events": events })
+
+
 func start_session(lesson_id: String, _request_id: String) -> Result:
 	# Idempotency is host-side (Idempotency-Key); the payload carries ids only.
 	return await _request("start_session", { "lesson_id": lesson_id })

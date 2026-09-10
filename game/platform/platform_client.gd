@@ -39,6 +39,18 @@ func bootstrap() -> Result:
 	return _unsupported("bootstrap")
 
 
+## Public lesson units for the pinned lesson (instructions, glyphs, types).
+## Needed by the lesson flow; DTO fields mirror /v1/lessons/:id.
+func get_lesson(_lesson_id: String) -> Result:
+	return _unsupported("get_lesson")
+
+
+## Ordered events batch (unit acknowledgments); sequence must be contiguous
+## with the server cursor. Events carry only typed DTO fields.
+func submit_events(_session_id: String, _events: Array) -> Result:
+	return _unsupported("submit_events")
+
+
 func start_session(_lesson_id: String, _request_id: String) -> Result:
 	return _unsupported("start_session")
 

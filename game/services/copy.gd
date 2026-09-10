@@ -26,6 +26,18 @@ const PAIRING_EXPIRES := "Kode ini berlaku selama 5 menit."
 const PAIRING_WAIT := "Menunggu persetujuan orang tua…"
 const PAIRING_DENIED := "Penautan ditolak. Coba lagi."
 const PAIRING_EXPIRED_CODE := "Kode penautan kedaluwarsa. Coba lagi."
+const QUESTION_INSTRUCTION := "Pilih bentuk yang sesuai."
+const QUESTION_PROGRESS := "Soal %d dari %d"
+const ACTION_CHECK := "Periksa jawaban"
+const ACTION_NEXT := "Berikutnya"
+const FEEDBACK_CORRECT := "Tepat! Yuk, lanjut."
+const FEEDBACK_RETRY := "Belum tepat. Yuk, dengarkan lagi."
+const FEEDBACK_NOT_FIRST := " (Jawaban pertama yang disimpan.)"
+const RESULT_TITLE := "Latihan selesai!"
+const RESULT_BODY := "Kamu sudah mencoba %d soal."
+const RESULT_ACCURACY := "Jawaban pertama tepat: %d/%d"
+const ACTION_RETRY_LESSON := "Coba lagi"
+const AUDIO_UNAVAILABLE := "Audio belum tersedia untuk latihan simulasi ini."
 
 ## Contract version this build speaks; anything else refuses to render
 ## learning content (godot-structure.md: reject incompatible versions).

@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/lesson/lesson.gd" id="1_lesson"]
+[ext_resource type="Script" path="res://scenes/shared/example_shape.gd" id="2_shape"]
+[ext_resource type="Texture2D" path="res://assets/art/mascot_boy.png" id="3_mascot"]
+[ext_resource type="Texture2D" path="res://assets/art/badge_star.png" id="4_star"]
 
 [node name="Lesson" type="Control"]
 layout_mode = 3
@@ -37,43 +40,218 @@ theme_override_constants/separation = 12
 
 [node name="Header" type="HBoxContainer" parent="Scroll/Spacers/Column"]
 layout_mode = 2
+theme_override_constants/separation = 10
 
 [node name="BackButton" type="Button" parent="Scroll/Spacers/Column/Header"]
 unique_name_in_owner = true
 layout_mode = 2
-custom_minimum_size = Vector2(48, 48)
-text = "Kembali"
+theme_type_variation = "GhostButton"
+custom_minimum_size = Vector2(96, 48)
+text = "‹ Kembali"
+
+[node name="TitleBox" type="VBoxContainer" parent="Scroll/Spacers/Column/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LessonTitle" type="Label" parent="Scroll/Spacers/Column/Header/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "HeadingBold"
+theme_override_font_sizes/font_size = 20
+autowrap_mode = 2
+text = "Latihan Simulasi"
+
+[node name="FixtureBanner" type="PanelContainer" parent="Scroll/Spacers/Column/Header/TitleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "TileYellow"
+
+[node name="BannerLabel" type="Label" parent="Scroll/Spacers/Column/Header/TitleBox/FixtureBanner"]
+layout_mode = 2
+theme_type_variation = "SmallBold"
+text = "SIMULASI — BUKAN MATERI BELAJAR"
 
 [node name="Progress" type="Label" parent="Scroll/Spacers/Column/Header"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 10
+theme_type_variation = "SmallBold"
 text = ""
 
-[node name="FixtureBanner" type="PanelContainer" parent="Scroll/Spacers/Column"]
+[node name="Progressbar" type="ProgressBar" parent="Scroll/Spacers/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+max_value = 100.0
+value = 0.0
+show_percentage = false
+
+[node name="ContentBox" type="VBoxContainer" parent="Scroll/Spacers/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="ExampleCard" type="PanelContainer" parent="Scroll/Spacers/Column/ContentBox"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="BannerLabel" type="Label" parent="Scroll/Spacers/Column/FixtureBanner"]
-autowrap_mode = 2
+[node name="ExampleBox" type="VBoxContainer" parent="Scroll/Spacers/Column/ContentBox/ExampleCard"]
 layout_mode = 2
-horizontal_alignment = 1
-text = "SIMULASI — BUKAN MATERI BELAJAR"
+theme_override_constants/separation = 10
 
-[node name="LessonTitle" type="Label" parent="Scroll/Spacers/Column"]
-autowrap_mode = 2
+[node name="ExampleShapes" type="Control" parent="Scroll/Spacers/Column/ContentBox/ExampleCard/ExampleBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+script = ExtResource("2_shape")
+
+[node name="ExampleLabel" type="Label" parent="Scroll/Spacers/Column/ContentBox/ExampleCard/ExampleBox"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 28
-text = "Latihan Simulasi"
+theme_type_variation = "TitleBig"
+text = "Lingkaran"
 
-[node name="DebugNote" type="Label" parent="Scroll/Spacers/Column"]
-autowrap_mode = 2
+[node name="ExampleInstruction" type="Label" parent="Scroll/Spacers/Column/ContentBox/ExampleCard/ExampleBox"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
-text = "[debug] area latihan — diisi GDM-012/013/014/015"
+theme_type_variation = "Muted"
+autowrap_mode = 2
+text = "Ini lingkaran. Perhatikan bentuknya, ya!"
+
+[node name="AudioNote" type="Label" parent="Scroll/Spacers/Column/ContentBox/ExampleCard/ExampleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "Muted"
+autowrap_mode = 2
+text = "Audio belum tersedia untuk latihan simulasi ini."
+
+[node name="ExampleNext" type="Button" parent="Scroll/Spacers/Column/ContentBox/ExampleCard/ExampleBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+text = "Berikutnya"
+
+[node name="QuestionCard" type="PanelContainer" parent="Scroll/Spacers/Column/ContentBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="QuestionBox" type="VBoxContainer" parent="Scroll/Spacers/Column/ContentBox/QuestionCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="QuestionPrompt" type="Label" parent="Scroll/Spacers/Column/ContentBox/QuestionCard/QuestionBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "HeadingBold"
+theme_override_font_sizes/font_size = 20
+autowrap_mode = 2
+text = "Bentuk mana yang tadi bernama lingkaran?"
+
+[node name="OptionsBox" type="VBoxContainer" parent="Scroll/Spacers/Column/ContentBox/QuestionCard/QuestionBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CheckButton" type="Button" parent="Scroll/Spacers/Column/ContentBox/QuestionCard/QuestionBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+disabled = true
+text = "Periksa jawaban"
+
+[node name="FeedbackBox" type="PanelContainer" parent="Scroll/Spacers/Column/ContentBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "TileYellow"
+
+[node name="FeedbackBoxInner" type="VBoxContainer" parent="Scroll/Spacers/Column/ContentBox/FeedbackBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="FeedbackLabel" type="Label" parent="Scroll/Spacers/Column/ContentBox/FeedbackBox/FeedbackBoxInner"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "SmallBold"
+autowrap_mode = 2
+text = "Tepat! Yuk, lanjut."
+
+[node name="FeedbackContinue" type="Button" parent="Scroll/Spacers/Column/ContentBox/FeedbackBox/FeedbackBoxInner"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+text = "Berikutnya"
+
+[node name="ResultCard" type="PanelContainer" parent="Scroll/Spacers/Column/ContentBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ResultBox" type="VBoxContainer" parent="Scroll/Spacers/Column/ContentBox/ResultCard"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="ResultHeader" type="HBoxContainer" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResultMascot" type="TextureRect" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox/ResultHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 160)
+texture = ExtResource("3_mascot")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ResultTitles" type="VBoxContainer" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox/ResultHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="ResultTitle" type="Label" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox/ResultHeader/ResultTitles"]
+layout_mode = 2
+theme_type_variation = "HeadingBold"
+theme_override_font_sizes/font_size = 24
+autowrap_mode = 2
+text = "Latihan selesai!"
+
+[node name="ResultCounts" type="Label" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox/ResultHeader/ResultTitles"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "Muted"
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 2
+text = "Kamu sudah mencoba 3 soal."
+
+[node name="StarBadge" type="TextureRect" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox/ResultHeader/ResultTitles"]
+custom_minimum_size = Vector2(72, 72)
+texture = ExtResource("4_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ResultAccuracy" type="Label" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "HeadingBold"
+theme_override_font_sizes/font_size = 17
+autowrap_mode = 2
+text = "Jawaban pertama tepat: 0/3"
+
+[node name="ResultNote" type="Label" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox"]
+layout_mode = 2
+theme_type_variation = "Muted"
+autowrap_mode = 2
+text = "Ini catatan latihan, bukan penilaian hafalan."
+
+[node name="RetryButton" type="Button" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 56)
+text = "Coba lagi"
+
+[node name="HomeButton" type="Button" parent="Scroll/Spacers/Column/ContentBox/ResultCard/ResultBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = "GhostButton"
+custom_minimum_size = Vector2(0, 52)
+text = "Kembali ke beranda"
 
 [node name="SpacerR" type="Control" parent="Scroll/Spacers"]
 layout_mode = 2

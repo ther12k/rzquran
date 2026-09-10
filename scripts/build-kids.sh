@@ -62,9 +62,21 @@ rm -f "$WEB_DIR"/* "$APK_DIR"/* "$LINUX_DIR"/*
 
 # Native smoke run (QA-02 oracle): the exported Linux binary boots its shared
 # scenes and prints the visible build ID; the web adapter is never loaded.
-"$LINUX_DIR/rzq-kids" --headless --quit-after 2 | tee /tmp/rzq-smoke.log | grep -q "build=$BUILD_ID platform=native-https" \
-  || { echo "Smoke run failed — output:"; cat /tmp/rzq-smoke.log; exit 1; }
-echo "Smoke run OK: $(grep build= /tmp/rzq-smoke.log)"
+# The app now runs a live pairing flow, so wait for the boot line to appear
+# (bounded) instead of racing the pipe at process exit.
+rm -f /tmp/rzq-smoke.log
+RZQ_API_BASE="http://127.0.0.1:3310" "$LINUX_DIR/rzq-kids" --headless --quit-after 60 > /tmp/rzq-smoke.log 2>&1 &
+SMOKE_PID=$!
+for _ in $(seq 1 40); do
+  grep -aq "build=$BUILD_ID platform=native-https" /tmp/rzq-smoke.log && break
+  kill -0 "$SMOKE_PID" 2>/dev/null || break
+  sleep 1
+done
+if ! grep -aq "build=$BUILD_ID platform=native-https" /tmp/rzq-smoke.log; then
+  echo "Smoke run failed — output:"; cat /tmp/rzq-smoke.log; exit 1
+fi
+kill "$SMOKE_PID" 2>/dev/null || true
+echo "Smoke run OK: $(grep -a build= /tmp/rzq-smoke.log)"
 
 echo "--- Artifacts ---"
 sha256sum "$WEB_DIR"/index.* "$LINUX_DIR/rzq-kids" "$LINUX_DIR/rzq-kids.pck" "$APK_DIR"/*.apk

@@ -93,13 +93,38 @@ func _ready() -> void:
 		_check(home.get_node("%ErrorBox").visible and home.get_node("%RetryButton").visible, "%s error distinct" % tag)
 		await _shoot("%s-error.png" % tag, out_dir)
 
-		# Lesson shell
+		# Lesson flow: example, question, feedback, result states
 		home.visible = false
 		lesson.visible = true
-		lesson.show_lesson({"title": "Latihan Simulasi", "content_mode": "fixture", "round_label": ""})
+		lesson.show_header({"title": "Latihan Simulasi", "content_mode": "fixture", "step": 1, "total": 6, "percent": 0.0})
+		lesson.show_example({"glyph": "●", "label": "Lingkaran", "instruction": "Ini lingkaran. Perhatikan bentuknya, ya!"})
 		await _frames(2)
 		_check(lesson.get_node("%BackButton").size.x >= 48.0 and lesson.get_node("%BackButton").size.y >= 48.0, "%s lesson back >= 48" % tag)
-		await _shoot("%s-lesson.png" % tag, out_dir)
+		_check(lesson.get_node("%ExampleNext").size.y >= 48.0, "%s example next >= 48" % tag)
+		await _shoot("%s-lesson-example.png" % tag, out_dir)
+		lesson.show_header({"title": "Latihan Simulasi", "content_mode": "fixture", "step": 4, "total": 6, "percent": 50.0})
+		lesson.show_question({"prompt": "Bentuk mana yang tadi bernama lingkaran?", "options": [
+			{"option_id": "opt_lingkaran", "label": "Lingkaran"},
+			{"option_id": "opt_persegi", "label": "Persegi"},
+			{"option_id": "opt_segitiga", "label": "Segitiga"},
+		]})
+		await _frames(2)
+		_check(lesson.get_node("%CheckButton").disabled, "%s check disabled until selection" % tag)
+		var option_btns: Array = lesson.get_node("%OptionsBox").get_children()
+		_check(option_btns.size() == 3, "%s three options rendered" % tag)
+		for ob in option_btns:
+			_check((ob as Button).size.y >= 48.0, "%s option >= 48 high" % tag)
+		await _shoot("%s-lesson-question.png" % tag, out_dir)
+		lesson.show_feedback({"correct": false, "first": true})
+		await _frames(2)
+		_check(lesson.get_node("%FeedbackBox").visible, "%s feedback visible" % tag)
+		_check(lesson.get_node("%FeedbackLabel").text.begins_with("✘"), "%s wrong feedback has cross prefix" % tag)
+		await _shoot("%s-lesson-feedback.png" % tag, out_dir)
+		lesson.show_result({"count": 3, "correct": 2, "total": 3})
+		await _frames(2)
+		_check(lesson.get_node("%ResultCard").visible, "%s result visible" % tag)
+		_check(lesson.get_node("%ResultAccuracy").text == "Jawaban pertama tepat: 2/3", "%s result accuracy copy" % tag)
+		await _shoot("%s-lesson-result.png" % tag, out_dir)
 
 		# Pairing panel (U02): code display, waiting, failure states
 		lesson.visible = false

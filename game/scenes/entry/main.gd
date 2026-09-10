@@ -23,6 +23,13 @@ var _bootstrap: Dictionary = {}
 var _active_session: Dictionary = {}
 var _seq: int = 0
 
+# Lesson-flow state (server-driven; never derived locally).
+var _units: Array = []
+var _unit_index: int = 0
+var _last_sequence: int = 0
+var _completed: Dictionary = {}          # unit_id -> true
+var _first_answer_stats := {"count": 0, "correct": 0}
+
 @onready var _build_label: Label = %BuildLabel
 @onready var _platform_label: Label = %PlatformLabel
 
@@ -43,7 +50,11 @@ func _ready() -> void:
 	_home.exit_pressed.connect(_on_exit_pressed)
 	_home.retry_pressed.connect(_load_home)
 	_lesson = LESSON_SCENE.instantiate()
-	_lesson.exit_to_home.connect(_on_back_to_home)
+	_lesson.next_requested.connect(_on_example_next)
+	_lesson.check_requested.connect(_on_check_pressed)
+	_lesson.continue_after_feedback_requested.connect(_on_feedback_continue)
+	_lesson.retry_lesson_requested.connect(_on_retry_lesson)
+	_lesson.home_requested.connect(_on_back_to_home)
 	_pairing = PAIRING_SCENE.instantiate()
 	_pairing.exit_pressed.connect(_on_exit_pressed)
 	_pairing.retry_pressed.connect(_on_pairing_retry)
@@ -140,15 +151,252 @@ func _on_start_pressed() -> void:
 
 func _enter_lesson() -> void:
 	_home.visible = false
-	var fixture: bool = str(_bootstrap.get("content_mode", "")) == "fixture"
-	var lesson: Dictionary = _bootstrap.get("lesson", {}) as Dictionary
-	_lesson.show_lesson({
-		"title": str(lesson.get("title", "")),
-		"content_mode": _bootstrap.get("content_mode", ""),
-		"round_label": "",
-	})
-	_lesson.visible = true
 	_state = State.LESSON
+	var lesson: Dictionary = _bootstrap.get("lesson", {}) as Dictionary
+	var lesson_result: PLATFORM_BASE.Result = await _client.get_lesson(str(lesson.get("lesson_id", "")))
+	if _state != State.LESSON:
+		return
+	if not lesson_result.ok:
+		_home.visible = true
+		_home.show_error(_message_for(lesson_result.error_code))
+		_state = State.HOME
+		return
+	_units = lesson_result.data.get("units", []) if typeof(lesson_result.data.get("units")) == TYPE_ARRAY else []
+	_last_sequence = int(_active_session.get("last_sequence", 0))
+	_completed = {}
+	for unit_id in _active_session.get("completed_unit_ids", []):
+		_completed[str(unit_id)] = true
+	_first_answer_stats = {"count": 0, "correct": 0}
+	_unit_index = 0
+	_lesson.visible = true
+	_advance_to_current_unit()
+
+
+## Jump to the first required unit the server has not recorded as complete.
+func _advance_to_current_unit() -> void:
+	while _unit_index < _units.size():
+		var unit: Dictionary = _units[_unit_index]
+		if bool(unit.get("required", false)) and not _completed.has(str(unit.get("unit_id", ""))):
+			break
+		_unit_index += 1
+	if _unit_index >= _units.size():
+		_finish_lesson()
+		return
+	_render_current_unit()
+
+
+func _render_current_unit() -> void:
+	var unit: Dictionary = _units[_unit_index]
+	var lesson: Dictionary = _bootstrap.get("lesson", {}) as Dictionary
+	_lesson.show_header({
+		"title": str(lesson.get("title", "")),
+		"content_mode": str(_bootstrap.get("content_mode", "")),
+		"step": _unit_index + 1,
+		"total": _units.size(),
+		"percent": _practice_percent(),
+	})
+	var unit_type := str(unit.get("unit_type", ""))
+	if unit_type == "letter":
+		_lesson.show_example({
+			"glyph": str(unit.get("letter", "")),
+			"label": _label_for_glyph(str(unit.get("letter", ""))),
+			"instruction": str(unit.get("instruction", "")),
+		})
+	elif unit_type == "choice":
+		var question: Dictionary = _active_session.get("current_question", {}) if typeof(_active_session.get("current_question")) == TYPE_DICTIONARY else {}
+		if question.is_empty():
+			# Refresh server state: the current question may have moved on.
+			var refreshed: PLATFORM_BASE.Result = await _client.get_session(str(_active_session.get("session_id", "")))
+			if _state != State.LESSON:
+				return
+			if refreshed.ok:
+				_active_session = refreshed.data
+				_last_sequence = int(_active_session.get("last_sequence", _last_sequence))
+				question = _active_session.get("current_question", {}) if typeof(_active_session.get("current_question")) == TYPE_DICTIONARY else {}
+		if question.is_empty():
+			# A choice unit with no live question is already answered: ack it.
+			_ack_current_unit()
+			return
+		_lesson.show_question({
+			"prompt": str(question.get("prompt", "")),
+			"options": question.get("options", []),
+		})
+	elif unit_type == "instruction":
+		# Non-required instructions pass through without a server event.
+		_unit_index += 1
+		_advance_to_current_unit()
+
+
+## Fixture glyph -> Indonesian label (display only; the fixture is the only
+## content where glyphs are shapes today). Reviewed letters keep their unit
+## instruction text verbatim instead.
+func _label_for_glyph(glyph: String) -> String:
+	match glyph:
+		"●":
+			return "Lingkaran"
+		"■":
+			return "Persegi"
+		"▲":
+			return "Segitiga"
+	return ""
+
+
+func _practice_percent() -> float:
+	var required := 0
+	var done := 0
+	for unit in _units:
+		if bool(unit.get("required", false)):
+			required += 1
+			if _completed.has(str(unit.get("unit_id", ""))):
+				done += 1
+	return 100.0 * done / required if required > 0 else 0.0
+
+
+## Example "Berikutnya": acknowledge the unit server-side, then advance.
+func _on_example_next() -> void:
+	if _state != State.LESSON:
+		return
+	_ack_current_unit()
+
+
+func _ack_current_unit() -> void:
+	var unit: Dictionary = _units[_unit_index]
+	var unit_id := str(unit.get("unit_id", ""))
+	_last_sequence += 1
+	var event := {
+		"event_id": _new_event_id(),
+		"sequence": _last_sequence,
+		"client_at": null,
+		"type": "unit_acknowledged",
+		"unit_id": unit_id,
+	}
+	var result: PLATFORM_BASE.Result = await _client.submit_events(str(_active_session.get("session_id", "")), [event])
+	if _state != State.LESSON:
+		return
+	if not result.ok:
+		if result.error_code == "EVENT_SEQUENCE_CONFLICT":
+			# Server cursor moved (retry after ambiguous network): refetch and
+			# re-ack with a fresh key — the stored result is authoritative.
+			var refreshed: PLATFORM_BASE.Result = await _client.get_session(str(_active_session.get("session_id", "")))
+			if refreshed.ok:
+				_active_session = refreshed.data
+				_last_sequence = int(_active_session.get("last_sequence", _last_sequence))
+				_completed.clear()
+				for uid in _active_session.get("completed_unit_ids", []):
+					_completed[str(uid)] = true
+				_advance_to_current_unit()
+				return
+		_home.visible = true
+		_lesson.visible = false
+		_home.show_error(_message_for(result.error_code))
+		_state = State.HOME
+		return
+	_completed[unit_id] = true
+	_unit_index += 1
+	_advance_to_current_unit()
+
+
+## Question "Periksa": submit the selected answer; the server evaluates.
+func _on_check_pressed() -> void:
+	if _state != State.LESSON:
+		return
+	var option_id: String = _lesson.selected_option()
+	if option_id.is_empty():
+		return
+	var question: Dictionary = _active_session.get("current_question", {}) if typeof(_active_session.get("current_question")) == TYPE_DICTIONARY else {}
+	if question.is_empty():
+		return
+	_lesson.set_submitting(true)
+	var result: PLATFORM_BASE.Result = await _client.submit_attempt(
+		str(_active_session.get("session_id", "")),
+		str(question.get("question_id", "")),
+		option_id,
+		_new_event_id(),
+	)
+	if _state != State.LESSON:
+		return
+	_lesson.set_submitting(false)
+	if not result.ok:
+		# Keep the selection; retry uses the same server semantics.
+		_lesson.show_question({
+			"prompt": str(question.get("prompt", "")),
+			"options": question.get("options", []),
+		})
+		push_warning("[rzq-kids] answer failed: " + result.error_code)
+		return
+	_last_sequence = int(result.data.get("sequence", _last_sequence))
+	var correct: bool = bool(result.data.get("correct", false))
+	_first_answer_stats["count"] = int(_first_answer_stats["count"]) + 1
+	if bool(result.data.get("first_response", true)) and correct:
+		_first_answer_stats["correct"] = int(_first_answer_stats["correct"]) + 1
+	_lesson.show_feedback({ "correct": correct, "first": bool(result.data.get("first_response", true)) })
+
+
+## Feedback "Berikutnya": ack the round unit (completion is ack-based) and
+## continue; the last round finishes the lesson.
+func _on_feedback_continue() -> void:
+	if _state != State.LESSON:
+		return
+	# The round's question is consumed; clear so the next choice unit refetches.
+	_active_session["current_question"] = {}
+	_ack_current_unit()
+
+
+## All required units acknowledged: server-confirmed finish + result screen.
+func _finish_lesson() -> void:
+	var result: PLATFORM_BASE.Result = await _client.finish_session(str(_active_session.get("session_id", "")), _new_request_key())
+	if _state != State.LESSON:
+		return
+	if not result.ok:
+		if result.error_code == "INCOMPLETE_SESSION":
+			# Server says something is missing: resync from server truth.
+			var refreshed: PLATFORM_BASE.Result = await _client.get_session(str(_active_session.get("session_id", "")))
+			if refreshed.ok:
+				_active_session = refreshed.data
+				_last_sequence = int(_active_session.get("last_sequence", _last_sequence))
+				_completed.clear()
+				for uid in _active_session.get("completed_unit_ids", []):
+					_completed[str(uid)] = true
+				_unit_index = 0
+				_advance_to_current_unit()
+				return
+		_home.visible = true
+		_lesson.visible = false
+		_home.show_error(_message_for(result.error_code))
+		_state = State.HOME
+		return
+	_active_session = {}
+	_lesson.show_header({ "title": "", "content_mode": str(_bootstrap.get("content_mode", "")), "step": 0, "total": 0, "percent": 100.0 })
+	_lesson.show_result({
+		"count": int(_first_answer_stats["count"]),
+		"correct": int(_first_answer_stats["correct"]),
+		"total": 3,
+	})
+
+
+## Result "Coba lagi": a new attempt is a NEW session, never a rewrite.
+func _on_retry_lesson() -> void:
+	if _state != State.LESSON:
+		return
+	_state = State.STARTING
+	_home.set_busy(true)
+	var lesson: Dictionary = _bootstrap.get("lesson", {}) as Dictionary
+	var result: PLATFORM_BASE.Result = await _client.start_session(str(lesson.get("lesson_id", "")), _new_request_key())
+	if _state != State.STARTING:
+		return
+	_home.set_busy(false)
+	if not result.ok:
+		_home.visible = true
+		_lesson.visible = false
+		_home.show_error(_message_for(result.error_code))
+		_state = State.HOME
+		return
+	_active_session = result.data
+	_enter_lesson()
+
+
+func _new_event_id() -> String:
+	return "%s-%s" % [_new_request_key(), Time.get_ticks_usec()]
 
 
 ## Back from the lesson: an unfinished session stays server-side (the home

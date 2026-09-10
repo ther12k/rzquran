@@ -139,6 +139,15 @@ func start_session(lesson_id: String, request_id: String) -> Result:
 	return await _authorized_json(HTTPClient.METHOD_POST, "/api/v1/learning/sessions", { "lesson_id": lesson_id }, { "Idempotency-Key": request_id })
 
 
+func get_lesson(lesson_id: String) -> Result:
+	return await _authorized_json(HTTPClient.METHOD_GET, "/api/v1/lessons/%s" % lesson_id, {}, {})
+
+
+## Ordered events batch (unit acknowledgments); sequence must be contiguous.
+func submit_events(session_id: String, events: Array) -> Result:
+	return await _authorized_json(HTTPClient.METHOD_POST, "/api/v1/learning/sessions/%s/events" % session_id, { "events": events }, {})
+
+
 func get_session(session_id: String) -> Result:
 	return await _authorized_json(HTTPClient.METHOD_GET, "/api/v1/learning/sessions/%s" % session_id, {}, {})
 
