@@ -17,7 +17,7 @@ LOG="${TMPDIR:-/tmp}/rzq-desktop.log"
 : > "$LOG"
 
 echo "[dev-desktop] launching game (API: $API_BASE) …"
-DISPLAY="${DISPLAY:-:1}" RZQ_API_BASE="$API_BASE" setsid "$HERE/build/kids-linux/rzq-kids" >"$LOG" 2>DISPLAY="${DISPLAY:-:1}" RZQ_API_BASE="$API_BASE" "$HERE/build/kids-linux/rzq-kids" >"$LOG" 2>&1 &1 &
+DISPLAY="${DISPLAY:-:1}" RZQ_API_BASE="$API_BASE" setsid "$HERE/build/kids-linux/rzq-kids" >"$LOG" 2>&1 &
 GAME_PID=$!
 trap 'kill "$GAME_PID" 2>/dev/null || true' EXIT
 
