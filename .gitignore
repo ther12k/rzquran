@@ -28,3 +28,11 @@ node_modules/
 # Signing material — never commit (debug keystore lives outside the repo)
 *.keystore
 *.jks
+
+# Local secrets / developer state
+.env
+.env.*
+!.env.example
+
+# Local diagnostic output
+.devlogs/
